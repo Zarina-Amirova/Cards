@@ -1,0 +1,14 @@
+{
+  "scenarios": [
+    {
+      "intent": "add_task",
+      "action": {
+        "type": "smart_app_data",
+        "payload": {
+          "type": "add_task",
+          "task": "{{ task }}"
+        }
+      }
+    }
+  ]
+}

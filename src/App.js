@@ -1,42 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { createAssistant } from '@sberdevices/assistant-client';
+import React, { useState } from 'react';
+import FlashcardList from './components/FlashcardList';
+import FlashcardForm from './components/FlashcardForm';
+import FolderList from './components/FolderList';
+import GameSwipe from './components/GameSwipe';
+import GameQuiz from './components/GameQuiz';
 
-const assistant = createAssistant({ getState: () => ({}) });
+function App() {
+    const [flashcards, setFlashcards] = useState([]);
+    const [folders, setFolders] = useState([]);
+    const [selectedFolder, setSelectedFolder] = useState(null);
 
-const App = () => {
-  const [tasks, setTasks] = useState([]);
+    const addFlashcard = (flashcard) => {
+        setFlashcards([...flashcards, { ...flashcard, id: flashcards.length }]);
+    };
 
-  useEffect(() => {
-    assistant.on('data', (event) => {
-      console.log(event);
-      // Обработка событий ассистента
-      if (event.type === 'smart_app_data' && event.payload) {
-        handleAssistantData(event.payload);
-      }
-    });
-  }, []);
+    const addFolder = (folder) => {
+        setFolders([...folders, folder]);
+    };
 
-  const handleAssistantData = (payload) => {
-    // Обработка данных, полученных от ассистента
-    if (payload.type === 'add_task') {
-      setTasks((prevTasks) => [...prevTasks, { id: Date.now(), name: payload.task }]);
-    }
-  };
+    const selectFolder = (folder) => {
+        setSelectedFolder(folder);
+        // Load flashcards for the selected folder
+    };
 
-  return (
-    <div className="App">
-      <h1>Flash Cards</h1>
-      <TaskList tasks={tasks} />
-    </div>
-  );
-};
-
-const TaskList = ({ tasks }) => (
-  <ul>
-    {tasks.map(task => (
-      <li key={task.id}>{task.name}</li>
-    ))}
-  </ul>
-);
+    return (
+        <div className="container">
+            <FolderList folders={folders} selectFolder={selectFolder} addFolder={addFolder} />
+            <FlashcardForm addFlashcard={addFlashcard} />
+            <FlashcardList flashcards={flashcards} />
+            <GameSwipe flashcards={flashcards} />
+            <GameQuiz flashcards={flashcards} />
+        </div>
+    );
+}
 
 export default App;
